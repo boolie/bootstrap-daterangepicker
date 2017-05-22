@@ -141,6 +141,7 @@
             this.minDate = false;
             this.maxDate = false;
             this.dateLimit = false;
+            this.autoApply = false;
             this.showDropdowns = false;
             this.showWeekNumbers = false;
             this.timePicker = false;
@@ -208,6 +209,9 @@
             if (typeof options.applyClass === 'string')
                 this.applyClass = options.applyClass;
 
+            if (typeof options.autoApply === 'boolean')
+                this.autoApply = options.autoApply;
+            
             if (typeof options.cancelClass === 'string')
                 this.cancelClass = options.cancelClass;
 
@@ -389,6 +393,16 @@
                 this.endDate = this.endDate.endOf('day');
             }
 
+            //can't be used together for now
+            if (this.timePicker && this.autoApply)
+                this.autoApply = false;
+
+            if (this.autoApply && typeof options.ranges !== 'object') {
+                this.container.find('.ranges').hide();
+            } else if (this.autoApply) {
+                //this.container.find('.applyBtn, .cancelBtn').addClass('hide');
+            }
+        
             if (this.singleDatePicker) {
                 this.opens = 'right';
                 this.container.addClass('single');
@@ -842,6 +856,14 @@
 
             this.setCustomDates(startDate, endDate);
 
+            if (this.autoApply) {
+                //this.calculateChosenLabel();
+                if (cal.hasClass('left')) { // click on from date
+                } else { // click on to date
+                    this.clickApply();
+                }
+            }
+            
             if (!this.timePicker)
                 endDate.endOf('day');
 
